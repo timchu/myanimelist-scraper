@@ -78,9 +78,7 @@ def PrintMap2(m):
 
 # Helper function to get the anime title from the list of URLs.
 def getAnimeName(a_url):
-  last_slash = a_url.rfind('/')
-  second_last_slash = a_url.rfind('/',0, last_slash)
-  return a_url[second_last_slash+1:last_slash][0:5]
+  return a_url.split('/')[-2].replace('_', ' ')
 
 def print_usage_and_exit():
   print '''Usage: python {prog} [anime url] [anime url] [anime url] ...
