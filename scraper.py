@@ -1,22 +1,8 @@
-"""A scraper to identify a single character in myanimelist."""
+"""A scraper to identify shared voice actors/actresses in myanimelist."""
 
 from lxml import html
 import requests
-
-"""Manually enter in your animes from my anime list"""
-
-anime_list_ = ['http://myanimelist.net/anime/10165/Nichijou', 'http://myanimelist.net/anime/10620/Mirai_Nikki_(TV)', 'http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi']
-
-
-# Helper function to get the anime title from the list of URLs.
-def getAnimeName(a_url):
-  last_slash = a_url.rfind('/')
-  second_last_slash = a_url.rfind('/',0, last_slash)
-  return a_url[second_last_slash+1:last_slash][0:5]
-
-anime_list = [a + '/characters' for a in anime_list_]
-pages = [requests.get(a) for a in anime_list]
-anime_titles = [getAnimeName(a) for a in anime_list]
+import sys
 
 
 # """ Takes as input a page, and outputs a list of (actor, character). """
@@ -56,7 +42,7 @@ def ActorCharMap(page, acmap, title):
             acmap[name][title].append(char)
 
 # output: {actor : { title : characters played in title}}
-def ActorCharacterMap(pages):
+def ActorCharacterMap(pages, anime_titles):
   acmap = {}
   for i in xrange(len(pages)):
     title = anime_titles[i]
@@ -79,7 +65,7 @@ def pruneMap(mapOfMaps):
             pruned_map[key] = mapOfMaps[key]
     return pruned_map
 
-# Some  formatting on the output.
+# Some formatting on the output.
 def PrintMap(m):
   for i in m:
     PrintMap2(m[i])
@@ -90,5 +76,30 @@ def PrintMap2(m):
     for i in m:
         print m[i], " : ", i
 
-prunedMap = pruneMap(ActorCharacterMap(pages))
-PrintMap(prunedMap)
+# Helper function to get the anime title from the list of URLs.
+def getAnimeName(a_url):
+  last_slash = a_url.rfind('/')
+  second_last_slash = a_url.rfind('/',0, last_slash)
+  return a_url[second_last_slash+1:last_slash][0:5]
+
+def print_usage_and_exit():
+  print '''Usage: python {prog} [anime url] [anime url] [anime url] ...
+
+Example: python {prog} http://myanimelist.net/anime/10165/Nichijou http://myanimelist.net/anime/10620/Mirai_Nikki_(TV) http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi'''.format(prog=sys.argv[0])
+  sys.exit(1)
+
+def main():
+  if len(sys.argv) <= 1:
+    print_usage_and_exit()
+
+  anime_urls = sys.argv[1:]
+  print anime_urls
+  character_urls = [url + '/characters' for url in anime_urls]
+  pages = [requests.get(url) for url in character_urls]
+  anime_titles = [getAnimeName(url) for url in character_urls]
+
+  prunedMap = pruneMap(ActorCharacterMap(pages, anime_titles))
+  PrintMap(prunedMap)
+
+if __name__ == '__main__':
+  main()
