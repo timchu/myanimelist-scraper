@@ -3,6 +3,7 @@
 from lxml import html
 import requests
 import sys
+from os import path
 
 
 # """ Takes as input a page, and outputs a list of (actor, character). """
@@ -92,7 +93,7 @@ def main():
 
   anime_urls = sys.argv[1:]
   print anime_urls
-  character_urls = [url + '/characters' for url in anime_urls]
+  character_urls = [path.join(url, 'characters') for url in anime_urls]
   pages = [requests.get(url) for url in character_urls]
   anime_titles = [getAnimeName(url) for url in character_urls]
 
