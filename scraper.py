@@ -4,6 +4,7 @@ from lxml import html
 import requests
 import sys
 from os import path
+from urlparse import urlparse
 
 # """ Takes as input a page, and outputs a list of (actor, character). """
 # def getChars(tree):
@@ -41,12 +42,19 @@ def getActorCharMap(page, acmap, title):
         else:
             acmap[name][title].append(char)
 
+def retryRequestGet(url, times=3):
+  for i in xrange(times):
+    page = requests.get(url)
+    if page.status_code == 200:
+      return page
+  raise RuntimeError('Could not get url {}'.format(url))
+
 # output: {actor : { title : characters played in title}}
-def getActorCharacterMap(pages, anime_titles):
+def getActorCharacterMap(urls, anime_titles):
   acmap = {}
-  for i in xrange(len(pages)):
+  for i in xrange(len(urls)):
     title = anime_titles[i]
-    page = pages[i]
+    page = retryRequestGet(urls[i])
     getActorCharMap(page, acmap, title)
   return acmap
 
@@ -86,17 +94,33 @@ def printUsageAndExit():
 Example: python {prog} http://myanimelist.net/anime/10165/Nichijou http://myanimelist.net/anime/10620/Mirai_Nikki_(TV) http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi'''.format(prog=sys.argv[0])
   sys.exit(1)
 
+def validateMALUrl(url):
+  try:
+    p = urlparse(url)
+    assert p.scheme == 'http'
+    assert p.netloc == 'myanimelist.net'
+    path_parts = p.path.split('/')
+    # '', 'anime', '10165', 'Nichijou'
+    assert len(path_parts) == 4
+    assert path_parts[1] == 'anime'
+
+    # check for integer anime id
+    int(path_parts[2])
+  except AssertionError, ValueError:
+    raise AssertionError('{} is not a proper MAL url'.format(url))
+
 def main():
   if len(sys.argv) <= 1:
     printUsageAndExit()
 
   anime_urls = sys.argv[1:]
-  print anime_urls
+  for url in anime_urls:
+    validateMALUrl(url)
+  print anime_urls, '\n'
   character_urls = [path.join(url, 'characters') for url in anime_urls]
-  pages = [requests.get(url) for url in character_urls]
   anime_titles = [getAnimeName(url) for url in character_urls]
 
-  prunedMap = pruneMap(getActorCharacterMap(pages, anime_titles))
+  prunedMap = pruneMap(getActorCharacterMap(character_urls, anime_titles))
   printMap(prunedMap)
 
 if __name__ == '__main__':
