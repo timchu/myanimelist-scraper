@@ -1,4 +1,8 @@
 # myanimelist-scraper
-Enter your favorite animes, and find out which characters are secretly voiced by the same VA! 
+Find out which characters are secretly voiced by the same VA! 
 
-You have to pull and manually enter your animes into the code.
+Instructions:
+
+(1) Pull code
+(2) Enter the URL of your favorite animes on myanimelist, directly into the code.
+(3) Run the code locally.
