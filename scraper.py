@@ -5,7 +5,6 @@ import requests
 import sys
 from os import path
 
-
 # """ Takes as input a page, and outputs a list of (actor, character). """
 # def getChars(tree):
 #     char_list = tree.xpath('//td/a[contains(@href, "/character/")]')
@@ -30,7 +29,7 @@ def getChar(actor_html):
 
 # output: actor : [chars played by actor]
 # adds to an existing acmap
-def ActorCharMap(page, acmap, title):
+def getActorCharMap(page, acmap, title):
     tree = html.fromstring(page.text)
     for actor_html in getJActorsHtml(page):
         name = actor_html.text
@@ -43,45 +42,45 @@ def ActorCharMap(page, acmap, title):
             acmap[name][title].append(char)
 
 # output: {actor : { title : characters played in title}}
-def ActorCharacterMap(pages, anime_titles):
+def getActorCharacterMap(pages, anime_titles):
   acmap = {}
   for i in xrange(len(pages)):
     title = anime_titles[i]
     page = pages[i]
-    ActorCharMap(page, acmap, title)
+    getActorCharMap(page, acmap, title)
   return acmap
 
 # counts the number of keys in a map
 def numKeys(m):
-    keyCount = 0
-    for key in m:
-        keyCount += 1
-    return keyCount
+  keyCount = 0
+  for key in m:
+      keyCount += 1
+  return keyCount
 
 # removes keys in a map whos value is a map with <= 1 key.
 def pruneMap(mapOfMaps):
-    pruned_map = {}
-    for key in mapOfMaps:
-        if numKeys(mapOfMaps[key]) > 1:
-            pruned_map[key] = mapOfMaps[key]
-    return pruned_map
+  pruned_map = {}
+  for key in mapOfMaps:
+      if numKeys(mapOfMaps[key]) > 1:
+          pruned_map[key] = mapOfMaps[key]
+  return pruned_map
 
 # Some formatting on the output.
-def PrintMap(m):
+def printMap(m):
   for i in m:
-    PrintMap2(m[i])
+    printMap2(m[i])
     print "Voiced By: (", i, ")"
     print ""
 
-def PrintMap2(m):
-    for i in m:
-        print m[i], " : ", i
+def printMap2(m):
+  for i in m:
+    print m[i], " : ", i
 
 # Helper function to get the anime title from the list of URLs.
 def getAnimeName(a_url):
   return a_url.split('/')[-2].replace('_', ' ')
 
-def print_usage_and_exit():
+def printUsageAndExit():
   print '''Usage: python {prog} [anime url] [anime url] [anime url] ...
 
 Example: python {prog} http://myanimelist.net/anime/10165/Nichijou http://myanimelist.net/anime/10620/Mirai_Nikki_(TV) http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi'''.format(prog=sys.argv[0])
@@ -89,7 +88,7 @@ Example: python {prog} http://myanimelist.net/anime/10165/Nichijou http://myanim
 
 def main():
   if len(sys.argv) <= 1:
-    print_usage_and_exit()
+    printUsageAndExit()
 
   anime_urls = sys.argv[1:]
   print anime_urls
@@ -97,8 +96,8 @@ def main():
   pages = [requests.get(url) for url in character_urls]
   anime_titles = [getAnimeName(url) for url in character_urls]
 
-  prunedMap = pruneMap(ActorCharacterMap(pages, anime_titles))
-  PrintMap(prunedMap)
+  prunedMap = pruneMap(getActorCharacterMap(pages, anime_titles))
+  printMap(prunedMap)
 
 if __name__ == '__main__':
   main()
