@@ -1,5 +1,5 @@
 # myanimelist-scraper
-Find out which characters are secretly voiced by the same VA! 
+Find out which of your favorite anime characters are secretly voiced by the same VA! 
 
 Instructions:
 
