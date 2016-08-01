@@ -8,5 +8,5 @@ Instructions:
 
 Example:
 ```bash
-python scraper.py http://myanimelist.net/anime/10165/Nichijou http://myanimelist.net/anime/10620/Mirai_Nikki_(TV) http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi
+python scraper.py "http://myanimelist.net/anime/10165/Nichijou" "http://myanimelist.net/anime/10620/Mirai_Nikki_(TV)" "http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi"
 ```
