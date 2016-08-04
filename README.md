@@ -4,8 +4,13 @@ Find out which of your favorite anime characters are secretly voiced by the same
 Instructions:
 
 (1) Pull code
-(2) On command line, run `python scraper.py [anime url on MAL] [anime url] [anime url]...` \n
-OR \n On command line, run python name_scraper.py [anime search term] [anime search term] ....
+
+(2) On command line, run `python scraper.py [anime url on MAL] [anime url] [anime url]...`
+
+OR
+
+On command line, run python name_scraper.py [anime search term] [anime search term] ....
+
 
 Example:
 ```bash
