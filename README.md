@@ -9,7 +9,7 @@ Instructions:
 
 OR
 
-On command line, run python name_scraper.py [anime search term] [anime search term] ....
+On command line, run `python name_scraper.py [anime search term] [anime search term] ....`
 
 
 Example:
