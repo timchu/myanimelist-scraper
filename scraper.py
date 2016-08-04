@@ -91,7 +91,7 @@ def getAnimeName(a_url):
 def printUsageAndExit():
   print '''Usage: python {prog} [anime url] [anime url] [anime url] ...
 
-Example: python {prog} http://myanimelist.net/anime/10165/Nichijou http://myanimelist.net/anime/10620/Mirai_Nikki_(TV) http://myanimelist.net/anime/26165/Yuri_Kuma_Arashi'''.format(prog=sys.argv[0])
+Example: python {prog} 'http://myanimelist.net/anime/2001/Tengen_Toppa_Gurren_Lagann' 'http://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood' '''.format(prog=sys.argv[0])
   sys.exit(1)
 
 def validateMALUrl(url):
@@ -109,11 +109,7 @@ def validateMALUrl(url):
   except AssertionError, ValueError:
     raise AssertionError('{} is not a proper MAL url'.format(url))
 
-def main():
-  if len(sys.argv) <= 1:
-    printUsageAndExit()
-
-  anime_urls = sys.argv[1:]
+def scrape(anime_urls):
   for url in anime_urls:
     validateMALUrl(url)
   print anime_urls, '\n'
@@ -122,6 +118,13 @@ def main():
 
   prunedMap = pruneMap(getActorCharacterMap(character_urls, anime_titles))
   printMap(prunedMap)
+
+def main():
+  if len(sys.argv) <= 1:
+    printUsageAndExit()
+
+  anime_urls = sys.argv[1:]
+  scrape(anime_urls)
 
 if __name__ == '__main__':
   main()
